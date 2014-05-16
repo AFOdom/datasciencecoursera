@@ -1,8 +1,8 @@
 pollutantmean <- function(directory,pollutant, id=1:332){
         
-        ## If the function has just been called, set "first" to true.
-        ## Used to build the vector of all means from all monitors.
-        first <- TRUE
+        ## Set up vector to hold running sum of pollutant values across
+        ## monitor files
+        all_pollutant_values <- c()
       
         ## Cycle through all monitor numbers passed through id argument.
         ## Construct filename to open relevant monitor file and take
@@ -19,26 +19,12 @@ pollutantmean <- function(directory,pollutant, id=1:332){
                 monitor_data <- read.table(long_filename,header=TRUE,",")
               
                 ## Get the mean of the pollutant records in this file
-                this_pollutant_mean<-mean(monitor_data[, pollutant],na.rm=TRUE)
-        
-                test_variable <- paste(filename, this_pollutant_mean, sep="=")
-                print(test_variable)
-              
-                ## If this is the first time we are cycling through the
-                ## loop, create the vector all_means to store the means
-                ## of the relevant pollutant from this and all 
-                ## subsequent files. Else, append this_pollutant_mean 
-                ## to the exsiting all_means vector
-                if (first){
-                        all_means <- c(this_pollutant_mean)
-                        first=FALSE
-                } else {
-                        all_means<-append(all_means,this_pollutant_mean)  
-                } 
+                all_pollutant_values <- append(all_pollutant_values, 
+                                              monitor_data[ , pollutant])
+               
       }
       
-      print(all_means)
       ## Take the means of all the monitor means we've collected for the
       ##specified pollutant
-      mean(all_means, na.rm=TRUE)
+      mean(all_pollutant_values, na.rm=TRUE)
 }
